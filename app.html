@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+                body {
+                        background-color: black;
+                        color: rgb(34, 0, 255);
+                }
+                .container {
+                        text-align: center;
+                        background-color: aqua;
+                }
+                .form-label {
+                        padding: 30px;
+                }
+        </style>
+</head>
+<body>
+       <div class="container">
+                <h2>todo app</h2>
+                <h4>entr text here</h4>
+                <input type="text" id="form1" class="form-control"/>
+                <button id="save" type="button">save</button>
+                <button id="delete" type ="button">Delete</button>
+                <ul id="todoList"></ul>
+       </div>
+
+       <script>
+        document.getElementById("save").addEventListener('click', async () => {
+                const name = document.getElementById('form1').value;
+                try {
+                        const response = await fetch('/app', {
+                                method: 'POST',
+                                headers: {
+                                        'Content-type': 'application/json'
+                                },
+                                body: JSON.stringify({ name })
+                        });
+                        const data = await response.text();
+                        console.log(data);
+
+                        const todoList = document.getElementById('todoList');
+                        const listItem = document.createElement('li');
+                        listItem.textContent = name;
+
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Delete';
+                        deleteButton.addEventListener('click', () => {
+                                listItem.remove();
+                        });
+
+                        listItem.appendChild(deleteButton);
+                        todoList.appendChild(listItem);
+
+                } catch (error) {
+                        console.error('error', error);
+                }
+        });
+
+        document.getElementById('delete').addEventListener('click', async () => {
+                try {
+                        const response = await fetch('/app', {
+                                method: 'DELETE'
+                        });
+                        const data = await response.text();
+                        console.log(data);
+
+                        const todoList = document.getElementById('todoList');
+                        todoList.innerHTML = '';
+
+                } catch (error) {
+                        console.log("error", error);
+                }
+        });
+        
+       </script>
+</body>
+</html>
